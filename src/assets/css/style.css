@@ -1,0 +1,23 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.inline {
+    display: inline;
+}
+
+.display-none {
+    display: none;
+}
+
+img {
+    width: 80px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
