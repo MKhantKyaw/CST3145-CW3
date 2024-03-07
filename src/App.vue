@@ -21,7 +21,19 @@
             </div>
         </nav>
         <main class="container">
-            <component :is="currentPage" :lessons="lessons" :carts="carts" @change-page="changePage" @add-item-to-club="addClub" @remove-item-from-cart="removeFromCart" @empty-cart="emptyCart"></component>
+            <strong>HTTPS Test: </strong>
+            <a v-bind:href="baseUrl" target="_blank">link</a>
+            <button @click="deleteAllCaches">
+                <span class="fas fa-trash"></span>
+                Delete All Caches
+            </button>
+            <button @click="unregisterServiceWorkers">
+                Unregister Service Workers
+            </button>
+            <button @click="reloadPage">
+                Reload Page
+            </button>
+            <component :is="currentPage" :selectedSortCategory="selectedSortCategory" :sortOrder="sortOrder":lessons="lessons" :carts="carts" @change-page="changePage" @add-item-to-club="addClub" @remove-item-from-cart="removeFromCart" @empty-cart="emptyCart"></component>
         </main>
     </div>
 </template>
@@ -46,8 +58,6 @@ export default {
             baseUrl: "https://after-school-app-env.eba-msnmp9d3.eu-west-2.elasticbeanstalk.com",
             lessons: [],
             carts: [],
-            searchQuery: "",
-            sortItem: [],
             selectedSortCategory: "subject",
             sortOrder: "ascending",
             currentPage: ProductList,
@@ -106,6 +116,23 @@ export default {
         emptyCart: function () {
             this.carts = []
         },
+        deleteAllCaches() {
+            caches.keys().then(function(names) {
+                for (let name of names)
+                    caches.delete(name);
+            });
+            console.log("All Caches Deleted");
+        },
+        unregisterServiceWorkers() {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (let registration of registrations) {
+                    registration.unregister()
+                }
+            })
+        },
+        reloadPage() {
+            window.location.reload()
+        }
     },
     created: async function () {
         const res = await fetch(`${this.baseUrl}/api/lessons?sortCategory=${this.selectedSortCategory}&sortOrder=${this.sortOrder}`)

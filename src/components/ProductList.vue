@@ -67,12 +67,10 @@
     export default {
         name: 'ProductList',
 
-        props: ['lessons'],
+        props: ['lessons', 'selectedSortCategory', 'sortOrder'],
         data() {
             return {
                 searchQuery: "",
-                selectedSortCategory: "subject",
-                sortOrder: "ascending",
                 baseUrl: "https://after-school-app-env.eba-msnmp9d3.eu-west-2.elasticbeanstalk.com"
             }
         },
