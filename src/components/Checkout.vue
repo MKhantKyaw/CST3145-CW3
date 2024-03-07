@@ -142,10 +142,18 @@
                 }
             },
 
+            changePage() {
+                this.$emit('change-page')
+            },
+
+            emptyCart() {
+                this.$emit('empty-cart')
+            },
 
             handleSubmit: async function (e) {
-                data = { name: this.name, phone: this.phone, lessons: this.carts }
+                const data = { name: this.name, phone: this.phone, lessons: this.carts }
                 e.preventDefault()
+                
                 this.editLesson()
                 try {
                     const res = await fetch(this.baseUrl + "/api/orders", {
@@ -159,8 +167,8 @@
                     if (res.status === 201) {
                         this.name = null
                         this.phone = null
-                        this.carts = []
-                        this.currentPage = "activities"
+                        this.emptyCart()
+                        this.changePage()
                     }
                 } catch (err) {
                     console.log(err)

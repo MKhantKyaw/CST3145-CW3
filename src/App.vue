@@ -21,7 +21,7 @@
             </div>
         </nav>
         <main class="container">
-            <component :is="currentPage" :lessons="lessons" :carts="carts" @add-item-to-club="addClub" @remove-item-from-cart="removeFromCart"></component>
+            <component :is="currentPage" :lessons="lessons" :carts="carts" @change-page="changePage" @add-item-to-club="addClub" @remove-item-from-cart="removeFromCart" @empty-cart="emptyCart"></component>
         </main>
     </div>
 </template>
@@ -65,41 +65,7 @@ export default {
                 count += cart.count
             })
             return count
-        },
-
-
-        nameValidate: function () {
-            this.errorMessage.name = ""
-            if (this.name) {
-                const regex = new RegExp("^[a-zA-Z ]*$")
-                if (regex.test(this.name)) {
-                    this.errorMessage.name = ""
-                    return true
-                }
-                else {
-                    this.errorMessage.name = "Please enter valid name"
-                    return false
-                }
-            }
-
-            return 0
-        },
-
-        phoneValidate: function () {
-            this.errorMessage.phone = ""
-            if (this.phone) {
-                const regex = new RegExp("^[0-9]*$")
-                if (regex.test(this.phone)) {
-                    this.errorMessage.phone = ""
-                    return true
-                }
-                else {
-                    this.errorMessage.phone = "Please enter valid phone number"
-                    return false
-                }
-            }
-            return 0
-        },
+        },  
     },
     methods: {
         changePage() {
@@ -136,6 +102,9 @@ export default {
             if (this.carts.length === 0) {
                 this.currentPage = ProductList
             }
+        },
+        emptyCart: function () {
+            this.carts = []
         },
     },
     created: async function () {
