@@ -14,7 +14,7 @@
                     </span>
                 </button>
                 <button disabled="disabled" v-else @click="changePage" type="button" class="btn btn-light">
-                    <span class="fas fa-cart-plus"></span>
+                    <font-awesome-icon icon="shopping-cart" />
                     Checkout
                     <span v-if="cartItemCount > 0" class="badge bg-danger">{{cartItemCount}}</span>
                 </button>
@@ -111,6 +111,10 @@ export default {
         const res = await fetch(`${this.baseUrl}/api/lessons?sortCategory=${this.selectedSortCategory}&sortOrder=${this.sortOrder}`)
         const data = await res.json()
         this.lessons = data
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+        }
     }
 }
 </script>
