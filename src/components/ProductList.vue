@@ -67,10 +67,12 @@
     export default {
         name: 'ProductList',
 
-        props: ['lessons', 'selectedSortCategory', 'sortOrder'],
+        props: ['lessons'],
         data() {
             return {
                 searchQuery: "",
+                sortOrder: "ascending",
+                selectedSortCategory: "subject",
                 baseUrl: "https://after-school-app-env.eba-msnmp9d3.eu-west-2.elasticbeanstalk.com"
             }
         },
@@ -81,29 +83,24 @@
                 return selectedLesson.spaces > 0
             } else return false
         },
-        search: async function () {
-            try {
-                if (this.searchQuery === "") {
-                    const res = await fetch(`${this.baseUrl}/api/lessons?sortCategory=${this.selectedSortCategory}&sortOrder=${this.sortOrder}`)
-                    this.lessons = await res.json()
-                }
-                else {
-                    const res = await fetch(this.baseUrl + "/api/lessons/search/" + this.searchQuery + "?sortCategory=subject&sortOrder=ascending")
-                    this.lessons = await res.json()
-                }
-            } catch (err) {
-                console.log(err)
-            }
+        
+        search: function () {
+            this.$emit('search', this.searchQuery)
         },
 
+        updateLessons: function (lessons) {
+            this.$emit('update-lessons', lessons)
+        },
         sortItems: async function () {
             try {
                 if (this.searchQuery === "") {
                     const res = await fetch(`${this.baseUrl}/api/lessons?sortCategory=${this.selectedSortCategory}&sortOrder=${this.sortOrder}`)
-                    this.lessons = await res.json()
+                    const sortLessons = await res.json()
+                    this.updateLessons(sortLessons)
                 } else {
                     const res = await fetch(`${this.baseUrl}/api/lessons/search/${this.searchQuery}?sortCategory=${this.selectedSortCategory}&sortOrder=${this.sortOrder}`)
-                    this.lessons = await res.json()
+                    const sortLessons = await res.json()
+                    this.updateLessons(sortLessons)
                 }
             } catch (err) {
                 console.log(err)

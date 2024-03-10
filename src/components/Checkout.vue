@@ -121,59 +121,14 @@
 
         },
         methods: {
-            removeFromCart(id) {
+            handleSubmit: function (event) {
+                event.preventDefault()
+                this.$emit('handle-submit', this.name, this.phone)
+            },
+            removeFromCart: function (id) {
                 this.$emit('remove-item-from-cart', id)
             },
-
-            editLesson: function () {
-                try {
-                    this.carts.forEach(async (lesson) => {
-                        await fetch(this.baseUrl + "/api/lessons/" + lesson._id, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(lesson)
-                        })
-                    })
-                }
-                catch (err) {
-                    console.log(err)
-                }
-            },
-
-            changePage() {
-                this.$emit('change-page')
-            },
-
-            emptyCart() {
-                this.$emit('empty-cart')
-            },
-
-            handleSubmit: async function (e) {
-                const data = { name: this.name, phone: this.phone, lessons: this.carts }
-                e.preventDefault()
-                
-                this.editLesson()
-                try {
-                    const res = await fetch(this.baseUrl + "/api/orders", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    this.editLesson()
-                    if (res.status === 201) {
-                        this.name = null
-                        this.phone = null
-                        this.emptyCart()
-                        this.changePage()
-                    }
-                } catch (err) {
-                    console.log(err)
-                }
-            },
+                      
         },
     }
 </script>

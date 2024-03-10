@@ -7,39 +7,59 @@ var cacheFiles = [
     "images/screenshot1.png",
     "images/screenshot2.png",
 ];
-self.addEventListener("install", function (e) {
-    console.log("[Service Worker] Install");
-    e.waitUntil(
-        caches.open(cacheName).then(function (cache) {
-            console.log("[Service Worker] Caching files");
-            return cache.addAll(cacheFiles);
-        })
+self.addEventListener('install', (event) => {
+    // Perform installation steps
+    event.waitUntil(
+        caches.open(cacheName)
+            .then((cache) => {
+                console.log('Opened cache');
+            })
     );
 });
 
-self.addEventListener("fetch", function (e) {
-    console.log("[Service Worker] Fetching", e.request.url);
-    e.respondWith(
-        caches.match(e.request).then(function (response) {
-            if (response) {
-                console.log("[Service Worker] Found in cache", e.request.url);
-                return response;
-            }
-            var requestClone = e.request.clone();
-            fetch(requestClone)
-                .then(function (response) {
-                    if (!response) {
-                        console.log("[Service Worker] No response from fetch");
-                        return response;
+// Fetch event listener
+// Fetch event listener
+self.addEventListener('fetch', (event) => {
+    event.respondWith(async function () {
+        const cache = await caches.open(cacheName);
+        let response = await cache.match(event.request);
+
+        // Return response from cache if found
+        if (response) {
+            return response;
+        }
+
+        // Otherwise, fetch from network and cache
+        response = await fetch(event.request);
+
+        // Check if valid response received
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+        }
+
+        // A valid response needs to be cloned before it can be put to a cache.
+        let responseToCache = response.clone();
+
+        // Put the fetched response in the cache
+        await cache.put(event.request, responseToCache);
+
+        return response;
+    }());
+});
+
+// Activate event listener
+self.addEventListener('activate', (event) => {
+    const cacheWhitelist = [cacheName];
+
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                        return caches.delete(cacheName);
                     }
-                    var responseClone = response.clone();
-                    if (e.request.url.startsWith('http') || e.request.url.startsWith('https')) {
-                        caches.open(cacheName).then(function (cache) {
-                            cache.put(e.request, responseClone);
-                        });
-                    }
-                    return response;
-                });
+                })
+            );
         })
     );
 });

@@ -5,6 +5,8 @@
                 <a class="navbar-brand p-2" href="#">
                     After School Club
                 </a>
+
+                <!-- cart button -->
                 <button v-if="cartItemCount > 0 || currentPage === 'cart'" @click="changePage" type="button"
                     class="btn btn-light">
                     <font-awesome-icon icon="shopping-cart" />
@@ -33,7 +35,11 @@
             <button @click="reloadPage">
                 Reload Page
             </button>
-            <component :is="currentPage" :selectedSortCategory="selectedSortCategory" :sortOrder="sortOrder":lessons="lessons" :carts="carts" @change-page="changePage" @add-item-to-club="addClub" @remove-item-from-cart="removeFromCart" @empty-cart="emptyCart"></component>
+            <component 
+                :is="currentPage" :selectedSortCategory="selectedSortCategory" :sortOrder="sortOrder" :lessons="lessons" :carts="carts" 
+                @change-page="changePage" @add-item-to-club="addClub" @remove-item-from-cart="removeFromCart" @empty-cart="emptyCart"
+                @handle-submit="handleSubmit" @search="search" @update-lessons="updateLessons">
+            </component>
         </main>
     </div>
 </template>
@@ -113,6 +119,66 @@ export default {
                 this.currentPage = ProductList
             }
         },
+
+        search: async function (searchQuery) {
+            try {
+                if (searchQuery === "") {
+                    const res = await fetch(`${this.baseUrl}/api/lessons?sortCategory=${this.selectedSortCategory}&sortOrder=${this.sortOrder}`)
+                    this.lessons = await res.json()
+                }
+                else {
+                    const res = await fetch(this.baseUrl + "/api/lessons/search/" + searchQuery + "?sortCategory=subject&sortOrder=ascending")
+                    this.lessons = await res.json()
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        },
+
+        updateLessons: function (lessons) {
+            this.lessons = lessons
+        },
+
+        editLesson: function () {
+                try {
+                    this.carts.forEach(async (lesson) => {
+                        await fetch(this.baseUrl + "/api/lessons/" + lesson._id, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(lesson)
+                        })
+                    })
+                }
+                catch (err) {
+                    console.log(err)
+                }
+            },  
+
+
+        handleSubmit: async function (e) {
+                const data = { name: this.name, phone: this.phone, lessons: this.carts }
+            
+                try {
+                    const res = await fetch(this.baseUrl + "/api/orders", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    this.editLesson()
+                    if (res.status === 201) {
+                        this.name = null
+                        this.phone = null
+                        this.carts = []
+                        this.changePage()
+                    }
+                } catch (err) {
+                    console.log(err)
+                }
+            },
         emptyCart: function () {
             this.carts = []
         },
