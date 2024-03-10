@@ -1,6 +1,6 @@
 var cacheName = "after-school-app-v1";
 var cacheFiles = [
-    "../index.html",
+    "index.html",
     //"products.js",
     "images/afterschool_64x64.png",
     "images/afterschool_512x512.png",
