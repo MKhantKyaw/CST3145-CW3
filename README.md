@@ -10,6 +10,14 @@ This template should help get you started developing with Vue 3 in Vite.
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
+## Project Links
+
+### Github Repo Link
+https://github.com/MKhantKyaw/CST3145-CW3
+
+### Application Link
+https://mkhantkyaw.github.io/CST3145-CW3/
+
 ## Project Setup
 
 ```sh
