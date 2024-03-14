@@ -65,7 +65,7 @@
 
 <script>
     export default {
-        name: 'ProductList',
+        name: 'Lesson',
 
         props: ['lessons'],
         data() {

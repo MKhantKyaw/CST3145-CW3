@@ -45,17 +45,13 @@
 </template>
 
 <script>
-import ProductList from './components/ProductList.vue';
+import Lesson from './components/Lesson.vue';
 import Checkout from './components/Checkout.vue';
 
 export default {
     name: 'App',
     components: {
-        ProductList,
-        Checkout
-    },
-    components: {
-        ProductList,
+        Lesson,
         Checkout
     },
     data() {
@@ -66,7 +62,7 @@ export default {
             carts: [],
             selectedSortCategory: "subject",
             sortOrder: "ascending",
-            currentPage: ProductList,
+            currentPage: Lesson,
             name: null,
             phone: null,
             canSubmit: false,
@@ -85,10 +81,10 @@ export default {
     },
     methods: {
         changePage() {
-            if (this.currentPage === ProductList) {
+            if (this.currentPage === Lesson) {
                 this.currentPage = Checkout
             } else {
-                this.currentPage = ProductList
+                this.currentPage = Lesson
             }
         },
         addClub: function (id) {
@@ -116,7 +112,7 @@ export default {
             const removedLesson = this.lessons.find((lesson) => lesson.id === id)
             removedLesson.spaces++
             if (this.carts.length === 0) {
-                this.currentPage = ProductList
+                this.currentPage = Lesson
             }
         },
 
@@ -210,4 +206,4 @@ export default {
         }
     }
 }
-</script>
+</script>./components/Lesson.vue
